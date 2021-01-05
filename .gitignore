@@ -1,0 +1,8 @@
+*.png
+*.jpg
+tmp.py
+tesseract/
+new/
+PageImages/
+VoterImages/
+__pycache__/
