@@ -63,11 +63,14 @@ def extract_voter_details():
 
         for index, line in enumerate(lines):
             if index == 0:
-                line = re.sub(regex_voter_id, '', line)
+                line = re.sub(regex_voter_id, ' ', line)
                 line = line.replace('$', 'S')
                 words = line.split()
                 if len(words)>2 and words[0]=='5':
                     words[0]='S'
+                if len(words)>2 and words[-1].isnumeric() :
+                    words[-2]= words[-2]+words[-1]
+    
                 for index,word in enumerate(words):
                     if len(word) == 1 and word.isalpha():
                         voter_data.status = word
@@ -110,9 +113,12 @@ def extract_voter_details():
 
         for index, line in enumerate(lines):
             if index == 0:
-                line = re.sub(regex_voter_id, '', line)
+                line = re.sub(regex_voter_id, ' ', line)
                 line = line.replace('$', 'S')
                 words = line.split()
+                if len(words)>2 and words[-1].isnumeric():
+                    words[-2]= words[-2]+words[-1]
+
                 for word in words:
                     if len(word) > 1 and not word.isnumeric() and not word.isalpha():
                         voter_data.voter_id = word
@@ -147,16 +153,19 @@ def extract_voter_details():
 
         for index, line in enumerate(lines):
             if index == 0:
-                line = re.sub(regex_voter_id, '', line)
+                line = re.sub(regex_voter_id, ' ', line)
                 line = line.replace('$', 'S')
                 words = line.split()
                 if len(words)>2 and words[0]=='5':
                     words[0]='S'
-                for word in words:
+                if len(words)>2 and words[-1].isnumeric() and not words[-2].isnumeric():
+                    words[-2]= words[-2]+words[-1]
+
+                for index,word in enumerate(words):
                     if len(word) == 1 and word.isalpha():
                         voter_data.status = word
-                    elif word.isnumeric() and voter_data.sr_no == '':
-                        voter_data.sr_no = word
+                    elif index!=len(words)-1 and word.isnumeric() :
+                        voter_data.sr_no= word
                     elif len(word) > 1 and not word.isnumeric() and not word.isalpha():
                         voter_data.voter_id = word
             elif index == 1 and ':' in line:
@@ -172,16 +181,21 @@ def extract_voter_details():
                 voter_data.gender = line[gender_index:gender_index+line.find(' ')]
         voter_list.append(voter_data)
 
+    # sorting voterlist on the basis of serial number
     voter_list.sort(key=lambda x: int(x.sr_no))
 
     # unique voter list by removing duplicate sr_no in list of voters
     unique_voter_list = {voter.sr_no: voter for voter in voter_list}.values()
 
-    # delete_indexes = []
+    # solving 0 to O problem in voter_id
+    for voter in unique_voter_list:
+        voter.voter_id= voter.voter_id.replace('O0','0')
+        match = re.search('O[1-9]', voter.voter_id)
+        if match:
+            voter.voter_id = voter.voter_id.replace(match.group(0), match.group(0).replace('O', '0'))
+
+
     for index, voter in enumerate(voter_list):
         if index < len(voter_list)-1 and voter.sr_no == voter_list[index+1].sr_no:
             print(voter.sr_no)
-    # print(delete_indexes)
-    # for index in delete_indexes:
-    #     del voter_list[index]
     return unique_voter_list

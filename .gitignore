@@ -1,6 +1,7 @@
 *.png
 *.jpg
 tmp.py
+CommonDetails.txt
 tesseract/
 new/
 PageImages/
