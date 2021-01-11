@@ -5,7 +5,8 @@ LINUX_CD = './'
 
 PAGE_PNG_PATH = '.'+os.path.sep+'PageImages'+os.path.sep
 VOTER_PNG_PATH = '.'+os.path.sep+'VoterImages'+os.path.sep
-TESS_LANGAUGE = 'eng+Devanagari'
+TESS_LANGAUGE_VOTER_DETAIL = 'eng+Devanagari'
+TESS_LANGAUGE_COMMON_DETAIL = 'Devanagari'
 PREFIX_VOTER_TEXTFILE = 'voter'
 PREFIX_VOTER_TEXTFILE_DELETED = 'deleted'
 PREFIX_VOTER_TEXTFILE_NEW = 'new'

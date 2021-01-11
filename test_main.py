@@ -8,7 +8,7 @@ import utility
 import constants
 
 print('started'+utility.get_time())
-filepath = '/home/hitesh/Downloads/MP_Sample_PDf/47NN113.pdf'
+filepath = '/home/hitesh/Downloads/Error/47NN132.pdf'
 
 utility.delete_files(constants.VOTER_PNG_PATH)
 utility.delete_files(constants.PAGE_PNG_PATH)

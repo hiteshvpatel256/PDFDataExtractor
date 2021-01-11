@@ -17,10 +17,10 @@ def extract_common_detail():
     lines = utility.remove_empty_lines(lines)
 
     for line in lines:
-        if any(word in line for word in constants.WORDLIST_NAGARPALIKA_NAME):
+        if any(word in line for word in constants.WORDLIST_NAGARPALIKA_NAME) :
             common_voter_data.nagar_parishad_name = line[line.find(':')+1:line.find('मतदाता')]
 
-        elif any(word in line for word in constants.WORDLIST_NAGARPALIKA_BHAG_NO):
+        elif any(word in line for word in constants.WORDLIST_NAGARPALIKA_BHAG_NO) and 'वार्ड क्रमांक' in line:
             common_voter_data.nagar_parishad_ward_no = utility.find_num(line, 1)
             common_voter_data.nagar_parishad_bhag_no = utility.find_num(line, 2)
 
@@ -42,12 +42,11 @@ def extract_voter_details():
     # regex_voter_id = '[_\|\]]'
 
     # temperory regex
-    regex_voter_id = '[_\|\]})]'
+    regex_voter_id = '[_\|\]})!;]'
 
     # processing voter files and retrieving the information
     list_of_files = glob.glob(constants.VOTER_PNG_PATH+constants.PREFIX_VOTER_TEXTFILE+'*.txt')
     # list_of_files.sort()
-
     for filepath in list_of_files:
         voter_data = VoterData()
 
@@ -72,7 +71,7 @@ def extract_voter_details():
                     words[-2]= words[-2]+words[-1]
     
                 for index,word in enumerate(words):
-                    if len(word) == 1 and word.isalpha():
+                    if len(word) == 1 and word.isalpha() and word != 'A':
                         voter_data.status = word
                     elif len(word) > 1 and not word.isnumeric() and not word.isalpha():
                         voter_data.voter_id = word
@@ -91,7 +90,7 @@ def extract_voter_details():
                 voter_data.gender = line[gender_index:gender_index+line.find(' ')]
         if voter_data.status == '':
             voter_list.append(voter_data)
-
+    
     # processing newly added voter files and retrieving the information
     list_of_files = glob.glob(constants.VOTER_PNG_PATH+constants.PREFIX_VOTER_TEXTFILE_NEW+'*.txt')
     # list_of_files.sort()
@@ -189,13 +188,22 @@ def extract_voter_details():
 
     # solving 0 to O problem in voter_id
     for voter in unique_voter_list:
-        voter.voter_id= voter.voter_id.replace('O0','0')
-        match = re.search('O[1-9]', voter.voter_id)
-        if match:
+        if voter.voter_id=='' or  '/' in voter.voter_id  :
+            continue
+        
+        match = re.search('O[0-9]', voter.voter_id)
+        if len(voter.voter_id)==10 and match is not None:
             voter.voter_id = voter.voter_id.replace(match.group(0), match.group(0).replace('O', '0'))
+        
+        if len(voter.voter_id)==11 :
+            voter.voter_id = voter.voter_id.replace('0O', '0').replace('O0','0')    
 
 
-    for index, voter in enumerate(voter_list):
-        if index < len(voter_list)-1 and voter.sr_no == voter_list[index+1].sr_no:
-            print(voter.sr_no)
+
+    # for index, voter in enumerate(voter_list):
+    #     print(voter.sr_no)
+        # if index < len(voter_list)-1 and voter.sr_no == voter_list[index+1].sr_no:
+        #     print(voter.sr_no)
+    
+    
     return unique_voter_list

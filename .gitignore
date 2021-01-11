@@ -1,6 +1,7 @@
 *.png
 *.jpg
 tmp.py
+test_main.py
 CommonDetails.txt
 tesseract/
 new/
