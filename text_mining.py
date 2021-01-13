@@ -196,7 +196,7 @@ def extract_voter_details():
             voter.voter_id = voter.voter_id.replace(match.group(0), match.group(0).replace('O', '0'))
         
         if len(voter.voter_id)==11 :
-            voter.voter_id = voter.voter_id.replace('0O', '0').replace('O0','0')    
+            voter.voter_id = voter.voter_id.replace('0O', '0').replace('O0','0').replace('SS','S')    
 
 
 
